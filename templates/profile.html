@@ -1,0 +1,63 @@
+<html>
+
+<head>
+  <title>Main Profile</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+</style>
+
+
+<body>
+
+  <div
+    style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 5em; text-align: center;">
+    <h1>Main Profile</h1>
+
+    <div>
+      <strong><span>Full name:</span></strong>
+      {{ if .Full_Name}}
+      <span>{{ .Full_Name }}</span>
+      {{ else }}
+      <span></span>
+      {{ end }}
+    </div>
+
+    <div>
+      <strong><span>Telephone:</span></strong>
+      {{ if .Telephone }}
+      <span>{{ .Telephone }}</span>
+      {{ else }}
+      <span></span>
+      {{ end }}
+    </div>
+
+    <div>
+      {{ if eq .Google "1"}}
+      <strong><span>Google Email:</span></strong>
+      <span>{{ .Email }}</span>
+      {{ else }}
+      <strong><span>Email:</span></strong>
+      <span>{{ .Email }}</span>
+      {{ end }}
+    </div>
+
+    <div style="display: flex; margin-top: 1em; ">
+      <!-- redirect to Enter Profile Information / edit-profile -->
+      <a style="margin-right: 1em;" class="btn btn-primary" href="/edit-profile">Edit</a>
+      <!-- session/auth will expire and redirect to Login Page / login -->
+      <form action="/logout" method="POST">
+        <button class="btn btn-primary" type="submit">Logout</button>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

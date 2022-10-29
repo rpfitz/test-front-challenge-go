@@ -1,0 +1,76 @@
+<html>
+
+<head>
+  <title>Enter Profile Information</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+</style>
+
+<body>
+
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 5em">
+    <h1 style="margin-bottom: 1em;">Enter Profile Information</h1>
+
+    <form style="width: 15em;" action="/edit-profile" method="POST">
+      <div style="display: flex; flex-direction: column;" class="form-group">
+        <div class="form-group">
+          <label for="full_name_id">Full Name</label>
+          {{ if .Full_Name}}
+          <input id="full_name_id" name="full_name" type="text" class="form-control" value="{{ .Full_Name }}"
+            placeholder="{{ .Full_Name }}">
+          {{ else }}
+          <input id="telephone_id" name="full_name" type="text" class="form-control" placeholder="Enter your full name">
+          {{ end }}
+        </div>
+
+        <div class="form-group">
+          {{ if .Telephone}}
+          <label for="telephone_id">Telephone</label>
+          <input id="telephone_id" name="telephone" type="text" class="form-control" value="{{ .Telephone }}"
+            placeholder="{{ .Telephone }}">
+          {{ else }}
+          <label for="telephone_id">Telephone</label>
+          <input id="telephone_id" name="telephone" type="text" class="form-control"
+            placeholder="Enter your telephone number">
+          {{ end }}
+        </div>
+
+        <div class="form-group">
+          {{ if eq .Google "1"}}
+          <label for="email_id">Google Email</label>
+          <input id="email_id" name="email" type="email" class="form-control" value="{{ .Email }}"
+            placeholder="{{ .Email }}" readonly>
+          {{ else }}
+          <label for="email_id">Email</label>
+          <input id="email_id" name="email" type="email" class="form-control" value="{{ .Email }}"
+            placeholder="{{ .Email }}">
+          {{ end }}
+        </div>
+
+        {{ if .Error}}
+        <div style="text-align: center;" class="alert alert-danger" role="alert">{{ .Error }}</div>
+        {{ end }}
+
+        <div style="display: flex; margin-top: 0">
+          <form action="/edit-profile" method="POST">
+            <button style="margin-right: 1em;" class="btn btn-primary" type="submit">Save & Continue</button>
+          </form>
+
+          <button class="btn btn-primary" href="/profile" type="submit">Cancel</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+</body>
+
+</html>
