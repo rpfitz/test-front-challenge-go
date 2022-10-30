@@ -3,6 +3,7 @@ package middleware
 import (
 	"frontendmod/controller"
 	"frontendmod/env"
+	"frontendmod/types"
 	"html/template"
 	"net/http"
 )
@@ -16,6 +17,7 @@ func ExecTemplates() {
 func ValidateAuthentication(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		controller.SetCacheHeaders(w)
+
 		_, isUserAuthenticated := IsUserAuthenticated(w, r)
 
 		if isUserAuthenticated {
@@ -37,7 +39,6 @@ func ValidateAuthentication(next func(w http.ResponseWriter, r *http.Request)) h
 			return
 		}
 
-		googleLoginUrl := env.FRONT_END_GOOGLE_LOGIN_URL
-		templates.ExecuteTemplate(w, "login.html", ErrorLoginType{GoogleUrl: googleLoginUrl})
+		templates.ExecuteTemplate(w, "login.html", types.ErrorLoginType{GoogleUrl: env.FRONT_END_GOOGLE_LOGIN_URL})
 	})
 }

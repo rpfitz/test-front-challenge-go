@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"frontendmod/types"
 	"net/http"
 )
 
 func GetEditProfile(w http.ResponseWriter, r *http.Request) {
 	_, email, full_name, telephone, isGoogle := GetCookiesSession(r)
 
-	templates.ExecuteTemplate(w, "edit-profile.html", UpdateProfileSuccessType{
+	templates.ExecuteTemplate(w, "edit-profile.html", types.UpdateProfileSuccessType{
 		Email:     email,
 		Full_Name: full_name,
 		Telephone: telephone,
@@ -26,7 +27,7 @@ func PostEditProfile(w http.ResponseWriter, r *http.Request) {
 
 	if emailExists {
 		_, email, full_name, telephone, google := GetCookiesSession(r)
-		templates.ExecuteTemplate(w, "edit-profile.html", UpdateProfileSuccessType{
+		templates.ExecuteTemplate(w, "edit-profile.html", types.UpdateProfileSuccessType{
 			Full_Name: full_name,
 			Telephone: telephone,
 			Email:     email,

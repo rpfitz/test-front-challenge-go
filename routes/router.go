@@ -15,7 +15,6 @@ func MyRouter() *mux.Router {
 
 	router.Handle("/", middleware.ValidateAuthentication(controller.GetLogin)).Methods("GET", http.MethodOptions)
 	router.Handle("/login", middleware.ValidateAuthentication(controller.GetLogin)).Methods("GET", http.MethodOptions)
-
 	router.HandleFunc("/login", controller.PostLogin).Methods("POST")
 
 	router.HandleFunc("/google/login", controller.GoogleLogin).Methods("POST")

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"frontendmod/types"
 	"log"
 	"net/http"
 )
@@ -10,25 +11,16 @@ func GetSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostSignUp(w http.ResponseWriter, r *http.Request) {
-	email := r.FormValue("email")
-	password := r.FormValue("password")
-
-	status, response := FetchPostAPISignUp(email, password)
-	if status != "200 OK" {
-		log.Println("SignUpGetController: Error fetching data.")
-		return
+	response, error := HandlePostSignUpRequest(w, r)
+	if error != nil {
+		log.Println(error)
 	}
 
 	if response.Success {
-		http.SetCookie(w, &http.Cookie{Name: "Authorization", Value: response.Token, HttpOnly: false})
-		http.SetCookie(w, &http.Cookie{Name: "Full_Name", Value: response.User.Full_Name, HttpOnly: false})
-		http.SetCookie(w, &http.Cookie{Name: "Telephone", Value: response.User.Telephone, HttpOnly: false})
-		http.SetCookie(w, &http.Cookie{Name: "Email", Value: response.User.Email, HttpOnly: false})
-		http.SetCookie(w, &http.Cookie{Name: "Google", Value: response.User.Google, HttpOnly: false})
 		http.Redirect(w, r, "/edit-profile", http.StatusSeeOther)
 		return
 	} else {
-		templates.ExecuteTemplate(w, "sign-up.html", LoginDataType{Error: response.Message})
+		templates.ExecuteTemplate(w, "sign-up.html", types.LoginDataType{Error: response.Message})
 		return
 	}
 }

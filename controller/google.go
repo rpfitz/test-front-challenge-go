@@ -2,9 +2,8 @@ package controller
 
 import (
 	"context"
-	"encoding/json"
 	"frontendmod/config"
-	"frontendmod/env"
+	"frontendmod/types"
 	"io"
 	"log"
 	"net/http"
@@ -21,7 +20,7 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	if state != "randomstate" {
 		log.Println("States doesn't match.")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "login.html", LoginDataType{Error: "Could not authenticate with Google account."})
+		templates.ExecuteTemplate(w, "login.html", types.LoginDataType{Error: "Could not authenticate with Google account."})
 		return
 	}
 
@@ -33,7 +32,7 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Code-Token exchange failed.")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "login.html", LoginDataType{Error: "Could not authenticate with Google account."})
+		templates.ExecuteTemplate(w, "login.html", types.LoginDataType{Error: "Could not authenticate with Google account."})
 		return
 	}
 
@@ -41,7 +40,7 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("User data fetch failed.")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "login.html", LoginDataType{Error: "Could not authenticate with Google account."})
+		templates.ExecuteTemplate(w, "login.html", types.LoginDataType{Error: "Could not authenticate with Google account."})
 		return
 	}
 
@@ -49,37 +48,19 @@ func GoogleCallback(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("Json parsing failed.")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "login.html", LoginDataType{Error: "Could not authenticate with Google account."})
+		templates.ExecuteTemplate(w, "login.html", types.LoginDataType{Error: "Could not authenticate with Google account."})
 		return
 	}
 
-	_, response := handleGoogleLogin(userData)
+	_, response := HandleGoogleLogin(w, userData)
+	log.Println("HandleGoogleLogin response:", response)
 	if response.Success {
-		http.SetCookie(w, &http.Cookie{Name: "Email", Value: response.User.Email, HttpOnly: false, Path: "/"})
-		http.SetCookie(w, &http.Cookie{Name: "Google", Value: response.User.Google, HttpOnly: false, Path: "/"})
-		http.SetCookie(w, &http.Cookie{Name: "Authorization", Value: response.Token, HttpOnly: false, Path: "/"})
-		http.SetCookie(w, &http.Cookie{Name: "Full_Name", Value: response.User.Full_Name, HttpOnly: false, Path: "/"})
-		http.SetCookie(w, &http.Cookie{Name: "Telephone", Value: response.User.Telephone, HttpOnly: false, Path: "/"})
 		http.Redirect(w, r, "/edit-profile", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "edit-profile.html", AuthUserType{
-			Email:     response.User.Email,
-			Google:    response.User.Google,
-			Full_Name: response.User.Full_Name,
-			Telephone: response.User.Telephone,
-		})
+		templates.ExecuteTemplate(w, "edit-profile.html", response.User)
 		return
 	} else {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
-		templates.ExecuteTemplate(w, "login.html", LoginDataType{Error: "Could not authenticate with Google account."})
+		templates.ExecuteTemplate(w, "login.html", types.LoginDataType{Error: "Could not authenticate with Google account."})
 		return
 	}
-}
-
-func handleGoogleLogin(callBackData []byte) (int, SignUpSuccesfulResponseType) {
-	var response SignUpSuccesfulResponseType
-
-	responseStatusCode, res := BytePOSTRequest(callBackData, env.BACK_END_HOST_URL, env.BACK_END_GOOGLE_AUTH_ENDPOINT)
-
-	json.Unmarshal(res, &response)
-	return responseStatusCode, response
 }
